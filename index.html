@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NoraCAD — Tasarımda sınırları siz belirleyin</title>
+<meta name="description" content="NoraCAD: mobilya atölyeleri ve iç mimarlar için 3B tasarım, teknik pafta, kesim listesi ve CNC çıktısı veren yerli mobilya tasarım programı.">
+<meta property="og:title" content="NoraCAD — Tasarımda sınırları siz belirleyin">
+<meta property="og:description" content="3B mobilya tasarımı, teknik pafta, kesim listesi ve CNC çıktısı tek programda.">
+<meta property="og:url" content="https://noracad.com/">
+<meta name="theme-color" content="#1f7a5a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f7a5a'/%3E%3Cpath d='M18 48V16h6l16 22V16h6v32h-6L24 26v22z' fill='white'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#f6f8f6; --paper:#ffffff; --ink:#132019; --muted:#5b6b62; --line:#dfe7e2;
+    --green:#1f7a5a; --green-d:#155a42; --green-l:#e6f3ec; --accent:#e8b04a;
+    --radius:16px; --max:1160px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+  /* Üst menü */
+  header{position:sticky;top:0;z-index:50;background:rgba(246,248,246,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.3px}
+  .logo svg{width:34px;height:34px}
+  .logo .spin{animation:spin 8s linear infinite;transform-origin:50% 50%}
+  @keyframes spin{to{transform:rotateY(360deg)}}
+  .menu{display:flex;gap:28px;font-size:15px;color:var(--muted)}
+  .menu a:hover{color:var(--green)}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:600;font-size:15px;transition:.2s;border:1.5px solid transparent;cursor:pointer}
+  .btn-p{background:var(--green);color:#fff}
+  .btn-p:hover{background:var(--green-d)}
+  .btn-o{border-color:var(--ink);color:var(--ink)}
+  .btn-o:hover{background:var(--ink);color:#fff}
+  .burger{display:none;background:none;border:0;font-size:26px;cursor:pointer}
+
+  /* Giriş */
+  .hero{padding:80px 0 60px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
+  .tag{display:inline-block;background:var(--green-l);color:var(--green-d);font-weight:600;font-size:13px;padding:6px 14px;border-radius:999px;margin-bottom:22px}
+  h1{font-size:clamp(38px,5.4vw,64px);line-height:1.05;letter-spacing:-1.6px;font-weight:800}
+  h1 em{font-style:normal;color:var(--green)}
+  .lead{font-size:19px;color:var(--muted);margin:22px 0 34px;max-width:540px}
+  .cta{display:flex;gap:14px;flex-wrap:wrap}
+  .trust{display:flex;gap:28px;margin-top:40px;color:var(--muted);font-size:14px;flex-wrap:wrap}
+  .trust b{display:block;color:var(--ink);font-size:22px}
+  .stage{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 30px 60px -30px rgba(19,32,25,.25)}
+  .stage-top{display:flex;gap:6px;margin-bottom:14px}
+  .stage-top i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+  .stage svg{width:100%;height:auto;display:block}
+  .draw{stroke-dasharray:900;stroke-dashoffset:900;animation:draw 2.6s ease forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+
+  /* Bölümler */
+  section{padding:90px 0}
+  .head{max-width:680px;margin-bottom:50px}
+  .head small{color:var(--green);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-size:13px}
+  h2{font-size:clamp(30px,3.6vw,44px);line-height:1.12;letter-spacing:-1px;margin-top:10px}
+  .head p{color:var(--muted);font-size:18px;margin-top:14px}
+
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+  .step{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:26px;position:relative}
+  .step::before{counter-increment:s;content:"0" counter(s);font-weight:800;color:var(--green);font-size:14px}
+  .step h3{font-size:19px;margin:10px 0 6px}
+  .step p{color:var(--muted);font-size:15px}
+
+  .feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .feat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:28px;transition:.25s}
+  .feat:hover{transform:translateY(-4px);border-color:var(--green);box-shadow:0 18px 40px -24px rgba(31,122,90,.45)}
+  .ico{width:46px;height:46px;border-radius:12px;background:var(--green-l);display:grid;place-items:center;margin-bottom:16px}
+  .ico svg{width:24px;height:24px;stroke:var(--green);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .feat h3{font-size:18px;margin-bottom:6px}
+  .feat p{color:var(--muted);font-size:15px}
+
+  .dark{background:var(--ink);color:#eef4f0}
+  .dark .head p{color:#9fb3a8}
+  .dark h2{color:#fff}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  .who{border:1px solid #2b3a32;border-radius:var(--radius);padding:34px}
+  .who h3{font-size:24px;margin-bottom:14px;color:#fff}
+  .who ul{list-style:none}
+  .who li{padding:10px 0;border-bottom:1px solid #2b3a32;color:#c6d4cc;display:flex;gap:12px}
+  .who li:last-child{border:0}
+  .who li::before{content:"✓";color:var(--accent);font-weight:700}
+
+  .machines{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+  .chip{background:var(--paper);border:1px solid var(--line);padding:10px 18px;border-radius:999px;font-weight:600;font-size:15px}
+
+  .plans{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:900px}
+  .plan{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:34px;display:flex;flex-direction:column}
+  .plan.pro{border:2px solid var(--green);position:relative}
+  .plan.pro::after{content:"En kapsamlı";position:absolute;top:-13px;right:26px;background:var(--green);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px}
+  .plan h3{font-size:22px}
+  .plan .sub{color:var(--muted);font-size:15px;margin:4px 0 20px}
+  .plan ul{list-style:none;margin-bottom:28px;flex:1}
+  .plan li{padding:7px 0;font-size:15px;display:flex;gap:10px}
+  .plan li::before{content:"●";color:var(--green);font-size:10px;margin-top:6px}
+  .launch{margin-top:26px;background:#fff7e6;border:1px solid #f1d9a6;border-radius:var(--radius);padding:20px 24px;max-width:900px;font-size:16px}
+  .launch b{color:#8a5a00}
+
+  .faq{max-width:800px}
+  details{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin-bottom:12px}
+  summary{font-weight:600;cursor:pointer;font-size:17px;list-style:none;display:flex;justify-content:space-between}
+  summary::after{content:"+";color:var(--green);font-size:22px;line-height:1}
+  details[open] summary::after{content:"–"}
+  details p{color:var(--muted);margin-top:12px}
+
+  .final{background:var(--green);color:#fff;border-radius:28px;padding:64px 40px;text-align:center}
+  .final h2{color:#fff}
+  .final p{opacity:.85;font-size:18px;margin:14px auto 30px;max-width:560px}
+  .final .btn-p{background:#fff;color:var(--green-d)}
+  .final .btn-o{border-color:#fff;color:#fff}
+  .final .btn-o:hover{background:#fff;color:var(--green-d)}
+
+  footer{padding:40px 0;color:var(--muted);font-size:14px}
+  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+
+  .js .reveal{opacity:0;transform:translateY(24px);transition:.7s ease}
+  .js .reveal.on{opacity:1;transform:none}
+
+  @media (max-width:960px){
+    .hero-grid,.split,.plans{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr 1fr}
+    .feats{grid-template-columns:1fr 1fr}
+    .menu{display:none;position:absolute;top:68px;left:0;right:0;background:var(--bg);flex-direction:column;padding:20px 24px;border-bottom:1px solid var(--line)}
+    .menu.open{display:flex}
+    .burger{display:block}
+    .nav .btn-p{display:none}
+  }
+  @media (max-width:600px){
+    .flow,.feats{grid-template-columns:1fr}
+    section{padding:64px 0}
+    .hero{padding:48px 0 30px}
+    .final{padding:48px 24px}
+  }
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js')</script>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="logo" aria-label="NoraCAD ana sayfa">
+      <svg viewBox="0 0 64 64"><g class="spin"><rect width="64" height="64" rx="14" fill="#1f7a5a"/><path d="M18 48V16h6l16 22V16h6v32h-6L24 26v22z" fill="#fff"/></g></svg>
+      NoraCAD
+    </a>
+    <nav class="menu" id="menu">
+      <a href="#nasil">Nasıl çalışır</a>
+      <a href="#ozellikler">Özellikler</a>
+      <a href="#kimler">Kimler için</a>
+      <a href="#paketler">Paketler</a>
+      <a href="#sss">SSS</a>
+    </nav>
+    <a href="#demo" class="btn btn-p">Ücretsiz dene</a>
+    <button class="burger" aria-label="Menü" onclick="document.getElementById('menu').classList.toggle('open')">☰</button>
+  </div>
+</header>
+
+<main>
+<!-- GİRİŞ -->
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="tag">Yerli mobilya tasarım ve üretim programı</span>
+      <h1>Tasarımda sınırları <em>siz</em> belirleyin.</h1>
+      <p class="lead">NoraCAD ile mutfaktan gardıroba her projeyi 3B tasarlayın; teknik paftası, kesim listesi ve CNC dosyası aynı anda hazır olsun.</p>
+      <div class="cta">
+        <a href="#demo" class="btn btn-p">Ücretsiz demo iste →</a>
+        <a href="#ozellikler" class="btn btn-o">Özellikleri gör</a>
+      </div>
+      <div class="trust">
+        <div><b>3B</b>canlı tasarım</div>
+        <div><b>Pafta</b>atölye ve montaj için</div>
+        <div><b>CNC</b>tek tıkla çıktı</div>
+      </div>
+    </div>
+
+    <div class="stage" aria-hidden="true">
+      <div class="stage-top"><i></i><i></i><i></i></div>
+      <svg viewBox="0 0 520 380">
+        <defs>
+          <pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#eef2ef" stroke-width="1"/></pattern>
+        </defs>
+        <rect width="520" height="380" fill="url(#g)"/>
+        <!-- Boy dolap -->
+        <g stroke="#132019" stroke-width="2" fill="none" stroke-linejoin="round">
+          <path class="draw" d="M80 80 L170 50 L170 300 L80 330 Z" fill="#f3efe7"/>
+          <path class="draw" d="M170 50 L230 75 L230 325 L170 300" fill="#e3dccd"/>
+          <path class="draw" d="M80 80 L140 105 L230 75 L170 50 Z" fill="#faf8f3"/>
+          <!-- Alt dolaplar -->
+          <path class="draw" d="M230 205 L400 150 L400 265 L230 325 Z" fill="#f3efe7"/>
+          <path class="draw" d="M230 205 L262 216 L432 161 L400 150 Z" fill="#c9b99c"/>
+          <path class="draw" d="M400 150 L432 161 L432 276 L400 265" fill="#e3dccd"/>
+          <!-- Üst dolaplar -->
+          <path class="draw" d="M245 95 L400 45 L400 115 L245 165 Z" fill="#f3efe7"/>
+          <path class="draw" d="M400 45 L425 54 L425 124 L400 115" fill="#e3dccd"/>
+        </g>
+        <!-- Kapak çizgileri -->
+        <g stroke="#132019" stroke-width="1.2" opacity=".7">
+          <path class="draw" d="M125 65 L125 315"/>
+          <path class="draw" d="M80 200 L170 172"/>
+          <path class="draw" d="M315 177 L315 297"/>
+          <path class="draw" d="M230 255 L400 200"/>
+          <path class="draw" d="M322 70 L322 140"/>
+        </g>
+        <!-- Kulplar -->
+        <g fill="#1f7a5a">
+          <rect x="114" y="150" width="4" height="30" rx="2"/>
+          <rect x="132" y="146" width="4" height="30" rx="2"/>
+        </g>
+        <!-- Ölçü çizgileri -->
+        <g stroke="#1f7a5a" stroke-width="1.4" fill="#1f7a5a" font-family="Segoe UI,Arial" font-size="13" font-weight="600">
+          <path d="M62 86 L62 336" /><path d="M56 86 h12 M56 336 h12"/>
+          <text x="20" y="215" stroke="none">2400</text>
+          <path d="M236 345 L406 288"/><path d="M233 340 l6 10 M403 283 l6 10"/>
+          <text x="300" y="342" stroke="none" transform="rotate(-18 300 342)">1800</text>
+        </g>
+        <!-- CNC etiketi -->
+        <g transform="translate(372 300)">
+          <rect width="128" height="56" rx="10" fill="#132019"/>
+          <text x="14" y="23" fill="#9fdcc2" font-family="Consolas,monospace" font-size="12">G01 X600 Y720</text>
+          <text x="14" y="42" fill="#e8b04a" font-family="Consolas,monospace" font-size="12">✓ NC hazır</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- NASIL ÇALIŞIR -->
+<section id="nasil">
+  <div class="wrap">
+    <div class="head reveal">
+      <small>Nasıl çalışır</small>
+      <h2>Çizdiğiniz an üretime hazır.</h2>
+      <p>Bir kez tasarlayın; pafta, liste ve makine dosyası için ayrı ayrı uğraşmayın.</p>
+    </div>
+    <div class="flow">
+      <div class="step reveal"><h3>Modülü kurun</h3><p>Boş modül üzerine ölçülü raf, dikme ve kapak ekleyin, sağda 3B olarak canlı izleyin.</p></div>
+      <div class="step reveal"><h3>Mekânı tasarlayın</h3><p>Modülleri sahneye yerleştirin; L ve U köşeler, taç-baza, kavisli modüller dahil.</p></div>
+      <div class="step reveal"><h3>Paftayı alın</h3><p>Atölye ve montajcı için ölçülü, kesitli, açıklamalı teknik pafta.</p></div>
+      <div class="step reveal"><h3>Kesime gönderin</h3><p>Kesim listesi, nesting ve etiketli CNC çıktısı tek pakette.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ÖZELLİKLER -->
+<section id="ozellikler" style="padding-top:0">
+  <div class="wrap">
+    <div class="head reveal">
+      <small>Özellikler</small>
+      <h2>Atölyenin gerçek kurallarıyla yazıldı.</h2>
+      <p>NoraCAD, sahada mobilya üreten bir ekibin günlük ihtiyaçlarından doğdu.</p>
+    </div>
+    <div class="feats">
+      <div class="feat reveal">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M21 7l-9 5-9-5"/></svg></div>
+        <h3>Canlı 3B tasarım</h3><p>Yerleştirdiğiniz her parça siz taşıyana kadar yerinde kalır. Renk ve doku panel panel korunur.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+        <h3>Teknik pafta</h3><p>Görünüşler, kesitler, radüs ölçüleri ve kırmızı çerçeveli notlar. Yazı boyutları ayarlanabilir.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v6H4zM4 14h7v6H4zM15 14h5v6h-5z"/></svg></div>
+        <h3>Kesim listesi & nesting</h3><p>Boy × En sırasıyla parça listesi, plaka yerleşimi ve kertmeler otomatik.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M5 19l3-3M16 8l3-3"/></svg></div>
+        <h3>CNC çıktısı</h3><p>NC, etiket ve etiket görselleri tek ZIP'te. Makinenize özel post yüklenebilir.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ico"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M15 8v8"/></svg></div>
+        <h3>Kapak düzenleme</h3><p>J kulp, gizli kulp, fugalı ve çerçeveli kapaklar; aynalı kapak. Tek kapağa ya da hepsine uygulayın.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20c0-8 8-16 16-16"/><path d="M4 20h16V4"/></svg></div>
+        <h3>Kavisli modüller</h3><p>Kavis dikmeleri, eşit bölme ve kapak boyları kavisli modül kurallarına göre kendiliğinden ayarlanır.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg></div>
+        <h3>Taç & baza</h3><p>Modülle birlikte hareket eder, yan yana gelince birleşir, köşelerde 45° gönye ile döner.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5.5L20 10l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"/></svg></div>
+        <h3>AI render</h3><p>Tasarımınızı müşteriye sunmaya hazır, gerçekçi görsellere dönüştürün.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M8 12h8M12 8v8"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <h3>Bağlantı tipleri</h3><p>Cabineo, Linko ve klasik birleşimler; delikler pafta ve CNC'ye doğrudan yansır.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KİMLER İÇİN -->
+<section id="kimler" class="dark">
+  <div class="wrap">
+    <div class="head reveal">
+      <small style="color:var(--accent)">Kimler için</small>
+      <h2>Üreten de, tasarlayan da aynı dili konuşsun.</h2>
+      <p>Tasarımcının çizdiği ile atölyenin kestiği aynı dosyadan çıkar.</p>
+    </div>
+    <div class="split">
+      <div class="who reveal">
+        <h3>Mobilya atölyeleri & üreticiler</h3>
+        <ul>
+          <li>Hatasız kesim listesi, daha az fire</li>
+          <li>CNC'ye hazır dosya, etiketli kesim</li>
+          <li>Montajcının okuyabileceği net pafta</li>
+          <li>Teklif öncesi hızlı 3B sunum</li>
+        </ul>
+      </div>
+      <div class="who reveal">
+        <h3>İç mimarlar & tasarımcılar</h3>
+        <ul>
+          <li>Mekânı modül modül, ölçülü kurun</li>
+          <li>Kapak, doku ve detayları serbestçe deneyin</li>
+          <li>AI render ile etkileyici sunumlar</li>
+          <li>Üreticiye doğrudan uygulanabilir çizim gönderin</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAKİNELER -->
+<section style="padding-bottom:40px">
+  <div class="wrap">
+    <div class="head reveal">
+      <small>Makine uyumu</small>
+      <h2>Makinenizin diliyle konuşur.</h2>
+      <p>Etiketli ve etiketsiz CNC makineleri için post desteği. Makinenizi listede göremiyorsanız bize yazın, postunu birlikte hazırlayalım.</p>
+    </div>
+    <div class="machines reveal">
+      <span class="chip">PRO UNITECH+ (etiketli)</span>
+      <span class="chip">AES Raptor (etiketli)</span>
+      <span class="chip">REXIS</span>
+      <span class="chip">ISO G-kod</span>
+      <span class="chip">+ size özel post</span>
+    </div>
+  </div>
+</section>
+
+<!-- PAKETLER -->
+<section id="paketler">
+  <div class="wrap">
+    <div class="head reveal">
+      <small>Paketler</small>
+      <h2>İhtiyacınıza göre seçin.</h2>
+      <p>Ömür boyu lisans ya da yıllık üyelik seçenekleriyle.</p>
+    </div>
+    <div class="plans">
+      <div class="plan reveal">
+        <h3>Standart</h3>
+        <p class="sub">Tasarım ve pafta için</p>
+        <ul>
+          <li>3B modül ve mekân tasarımı</li>
+          <li>Teknik pafta</li>
+          <li>Kesim listesi</li>
+          <li>Kapak düzenleme</li>
+        </ul>
+        <a href="#demo" class="btn btn-o">Fiyat bilgisi al</a>
+      </div>
+      <div class="plan pro reveal">
+        <h3>Premium</h3>
+        <p class="sub">Tasarımdan kesime eksiksiz</p>
+        <ul>
+          <li>Standart paketteki her şey</li>
+          <li>Nesting ve CNC çıktısı</li>
+          <li>Etiketli makine desteği</li>
+          <li>Kavisli modüller, taç & baza</li>
+          <li>Öncelikli destek</li>
+        </ul>
+        <a href="#demo" class="btn btn-p">Fiyat bilgisi al</a>
+      </div>
+    </div>
+    <div class="launch reveal"><b>Lansman fırsatı:</b> İlk 100 müşteriye özel indirimli fiyat. Satın almadan önce ücretsiz deneyin.</div>
+  </div>
+</section>
+
+<!-- SSS -->
+<section id="sss" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head reveal"><small>Sık sorulanlar</small><h2>Merak edilenler</h2></div>
+    <div class="faq">
+      <details class="reveal"><summary>Programı kurmam gerekiyor mu?</summary><p>Hayır. NoraCAD tarayıcıda çalışır; internet bağlantısı olan bir bilgisayardan giriş yapmanız yeterli.</p></details>
+      <details class="reveal"><summary>Ücretsiz deneyebilir miyim?</summary><p>Evet. Demo talebinizi iletin, programı kendi projelerinizle deneyin.</p></details>
+      <details class="reveal"><summary>Benim CNC makinemle çalışır mı?</summary><p>Yaygın makineler için hazır post desteği var. Makineniz listede yoksa örnek bir NC dosyanızla size özel post hazırlıyoruz.</p></details>
+      <details class="reveal"><summary>Ömür boyu lisans ile yıllık üyelik arasındaki fark nedir?</summary><p>Ömür boyu lisansta programı bir kez satın alırsınız. Yıllık üyelikte güncellemeler, yeni özellikler ve destek sürekli devam eder.</p></details>
+      <details class="reveal"><summary>AI render pakete dahil mi?</summary><p>AI render ayrı bir ek pakettir; aylık paket ya da süresiz kredi paketi olarak alınabilir.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- SON ÇAĞRI -->
+<section id="demo" style="padding-top:20px">
+  <div class="wrap">
+    <div class="final reveal">
+      <h2>Kendi projenizle deneyin.</h2>
+      <p>Ücretsiz demo ve lansman fiyatı için bize yazın. Programı hemen incelemek isterseniz demo sürümünü açabilirsiniz.</p>
+      <div class="cta" style="justify-content:center">
+        <a href="https://www.instagram.com/nora.cadd/" target="_blank" rel="noopener" class="btn btn-p">Instagram'dan yazın</a>
+        <a href="https://yavuz0307.github.io/noracad/" target="_blank" rel="noopener" class="btn btn-o">Demoyu aç</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="logo" style="font-size:16px">
+      <svg viewBox="0 0 64 64" style="width:26px;height:26px"><rect width="64" height="64" rx="14" fill="#1f7a5a"/><path d="M18 48V16h6l16 22V16h6v32h-6L24 26v22z" fill="#fff"/></svg>
+      NoraCAD
+    </div>
+    <div>© <span id="yil">2026</span> NoraCAD · noracad.com</div>
+    <a href="https://www.instagram.com/nora.cadd/" target="_blank" rel="noopener">Instagram @nora.cadd</a>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yil').textContent = new Date().getFullYear();
+  document.querySelectorAll('.menu a').forEach(a => a.addEventListener('click', () => document.getElementById('menu').classList.remove('open')));
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), {threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('on')), 2500);
+</script>
+</body>
+</html>
